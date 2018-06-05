@@ -52,7 +52,7 @@ if [ -n "$ref" ] && git cat-file -e "$ref"; then
   if [ "${ref}" = "${init_commit}" ]; then
     log_range="--reverse HEAD"
   else
-    log_range="--reverse ${ref}~1..HEAD"
+    log_range="--reverse ${ref}..HEAD"
   fi
 else
   log_range="-1"
@@ -82,6 +82,7 @@ else
   {
     set -f
     refs_list=$(git log $ci_skip --format='%H' --first-parent $log_range $paths_search)
+    echo "$ref"
     for i in $refs_List
     do
       cmp -s <(cat package.json | jq -r '.dependencies,.devDependencies') <(git show $i:package.json | jq -r '.dependencies,.devDependencies')
