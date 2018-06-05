@@ -84,9 +84,11 @@ else
     refs_list=$(git log $ci_skip --format='%H' --first-parent $log_range $paths_search)
     for i in $refs_List
     do
-      if cmp -s <(cat package.json | jq -r '.dependencies,.devDependencies') <(git show $i:package.json | jq -r '.dependencies,.devDependencies'); then
-        echo "Identical"
-    
+      cmp -s <(cat package.json | jq -r '.dependencies,.devDependencies') <(git show $i:package.json | jq -r '.dependencies,.devDependencies')
+      if [$? == 1]; then
+        echo "$i"
+      fi
+    done
     set +f
   } | jq -R '.' | jq -s "map({ref: .})" >&3
 fi
